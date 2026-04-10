@@ -11,7 +11,7 @@ powered by Claude. Build agents in 10 lines. Ship in minutes.
 """
 
 __version__ = "0.1.0"
-__author__ = "tabato"
+__author__ = "Thomas Abato"
 __license__ = "MIT"
 
 from .agent import Agent, Pipeline, Usage
