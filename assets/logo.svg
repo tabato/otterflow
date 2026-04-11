@@ -31,6 +31,6 @@
   <text x="340" y="295" text-anchor="middle" font-family="system-ui,sans-serif" font-size="42" font-weight="700" letter-spacing="-1" fill="#085041">Otter<tspan fill="#1D9E75">Flow</tspan></text>
   <text x="340" y="328" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15" font-weight="400" fill="#1D9E75" letter-spacing="2">CLEVER AGENTS. CLEAN CODE.</text>
   <rect x="298" y="348" width="84" height="24" rx="12" fill="#E1F5EE"/>
-  <text x="340" y="364" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="500" fill="#085041">v0.2.0 · MIT</text>
+  <text x="340" y="364" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="500" fill="#085041">v0.2.1 · MIT</text>
 </svg>
 
