@@ -1,5 +1,9 @@
 # 🦦 OtterFlow
 
+<div align="center">
+  <img src="assets/logo.svg" alt="OtterFlow logo" width="400"/>
+</div>
+
 **Build production-ready AI agents in 10 lines of Python.**
 
 [![PyPI version](https://img.shields.io/pypi/v/otterflow.svg)](https://pypi.org/project/otterflow/)
