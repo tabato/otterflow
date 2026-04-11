@@ -68,7 +68,10 @@ def tool(name: str | None = None, description: str | None = None):
         hints.pop("return", None)
         sig = inspect.signature(fn)
 
-        type_map = {str: "string", int: "integer", float: "number", bool: "boolean", list: "array", dict: "object"}
+        type_map = {
+            str: "string", int: "integer", float: "number",
+            bool: "boolean", list: "array", dict: "object",
+        }
 
         props: dict[str, dict] = {}
         required: list[str] = []
@@ -82,7 +85,7 @@ def tool(name: str | None = None, description: str | None = None):
         if required:
             schema["required"] = required
 
-        fn._tool_spec = Tool(name=_name, description=_desc, parameters=schema, fn=fn)
+        setattr(fn, "_tool_spec", Tool(name=_name, description=_desc, parameters=schema, fn=fn))
         return fn
 
     return decorator
@@ -147,7 +150,9 @@ read_file = Tool(
     description="Read the contents of a local file by its path.",
     parameters={
         "type": "object",
-        "properties": {"path": {"type": "string", "description": "Absolute or relative file path."}},
+        "properties": {
+            "path": {"type": "string", "description": "Absolute or relative file path."},
+        },
         "required": ["path"],
     },
     fn=_read_file_fn,

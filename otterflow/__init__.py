@@ -15,17 +15,16 @@ __author__ = "Thomas Abato"
 __license__ = "MIT"
 
 from .agent import Agent, Pipeline, Usage
-from .memory import Memory
-from .tools import Tool, tool
-
 from .agents import (
-    ResearchAgent,
-    EmailAgent,
-    DataAnalystAgent,
+    BusinessIntelPipeline,
     CompetitiveIntelAgent,
     ContentCreatorAgent,
-    BusinessIntelPipeline,
+    DataAnalystAgent,
+    EmailAgent,
+    ResearchAgent,
 )
+from .memory import Memory
+from .tools import Tool, tool
 
 __all__ = [
     "Agent",

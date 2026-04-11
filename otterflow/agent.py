@@ -16,10 +16,10 @@ from typing import Any, Callable, Iterator
 import anthropic
 from dotenv import load_dotenv
 
-load_dotenv()  # no-op if no .env file present
-
 from .memory import Memory
 from .tools import Tool
+
+load_dotenv()  # no-op if no .env file present
 
 
 # ────────────────────────────────────────────────────────────────────────────

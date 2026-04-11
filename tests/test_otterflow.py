@@ -4,14 +4,13 @@ tests/test_otterflow.py
 Unit tests for otterflow. Run with: pytest tests/
 """
 
-import asyncio
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
 
-from otterflow import Agent, Memory, Pipeline, Usage, Tool, tool
+from otterflow import Agent, Memory, Pipeline, Tool, Usage, tool
+from otterflow.agents import ContentCreatorAgent
 from otterflow.tools import calculator, read_file, write_file
-from otterflow.agents import ResearchAgent, EmailAgent, ContentCreatorAgent
-
 
 # ── Tool tests ───────────────────────────────────────────────────────────────
 
