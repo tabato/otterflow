@@ -66,6 +66,14 @@ Get a key at [console.anthropic.com](https://console.anthropic.com/).
 
 ---
 
+## New to AI agents?
+
+**[→ Read LEARN.md](LEARN.md)** — a beginner's guide that explains agents, tools, memory, and
+orchestration in plain English. No jargon. No experience required. Goes from zero to your first
+working agent in about 20 minutes.
+
+---
+
 ## Core Concepts
 
 ### 1. Agent — the building block
