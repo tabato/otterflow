@@ -5,18 +5,13 @@ examples/quickstart.py
 Run any of these after: pip install otterflow
 """
 
-import otterflow
 from otterflow import Agent, Memory
-from otterflow.tools import web_search, read_file, write_file, calculator, run_python
 from otterflow.agents import (
-    ResearchAgent,
-    EmailAgent,
-    DataAnalystAgent,
-    CompetitiveIntelAgent,
-    ContentCreatorAgent,
     BusinessIntelPipeline,
+    ContentCreatorAgent,
+    ResearchAgent,
 )
-
+from otterflow.tools import calculator, web_search
 
 # ── Example 1: Minimal custom agent ─────────────────────────────────────────
 
@@ -99,8 +94,9 @@ def example_5_multi_agent():
 # ── Example 6: Custom @tool decorator ────────────────────────────────────────
 
 def example_6_custom_tool():
-    from otterflow.tools import tool
     from datetime import datetime, timezone
+
+    from otterflow.tools import tool
 
     @tool(description="Return the current UTC datetime.")
     def get_current_time() -> str:

@@ -9,8 +9,7 @@ from __future__ import annotations
 
 from ..agent import Agent
 from ..memory import Memory
-from ..tools import web_search, read_file, write_file, run_python, calculator
-
+from ..tools import calculator, read_file, run_python, web_search, write_file
 
 # ────────────────────────────────────────────────────────────────────────────
 # Research Agent
@@ -33,7 +32,8 @@ def ResearchAgent(verbose: bool = False) -> Agent:
             "and market intelligence. When given a research task:\n"
             "1. Break it into sub-questions\n"
             "2. Search for authoritative, recent sources\n"
-            "3. Synthesize findings into a clear, structured report with sections and bullet points\n"
+            "3. Synthesize findings into a clear, structured report with sections "
+            "and bullet points\n"
             "4. Always cite your sources\n"
             "Be thorough but concise. Prioritize actionable insights."
         ),
@@ -173,7 +173,8 @@ _PLATFORM_GUIDANCE: dict[str, str] = {
         "no 'welcome to this week's edition'.\n"
         "- Structure: one big idea per issue. Use headers to break sections. "
         "Aim for 500-800 words unless your audience expects long-form.\n"
-        "- Engagement triggers: personal anecdotes, contrarian takes, 'what most people miss' framing.\n"
+        "- Engagement triggers: personal anecdotes, contrarian takes, "
+        "'what most people miss' framing.\n"
         "- CTA: one primary ask — reply, click, share, or upgrade. "
         "Place it at the end AND optionally after the hook."
     ),
@@ -228,8 +229,10 @@ def ContentCreatorAgent(
             "(question, take, story beat) with example copy.\n"
             "4. CTA — critique the existing CTA or note its absence. Write a better one.\n"
             "5. REWRITE — always offer a full rewrite at the end, not just notes.\n\n"
-            "Be direct and opinionated. Say 'this hook is bad because X' not 'consider strengthening the hook'. "
-            "Vague feedback is useless. Every critique must come with a concrete example or rewrite."
+            "Be direct and opinionated. "
+            "Say 'this hook is bad because X' not 'consider strengthening the hook'. "
+            "Vague feedback is useless. "
+            "Every critique must come with a concrete example or rewrite."
         ),
         tools=[web_search, read_file],
         memory=mem,
