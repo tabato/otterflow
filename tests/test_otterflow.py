@@ -309,6 +309,31 @@ async def test_pipeline_arun(mock_get_async_client):
     assert result == "final async"
 
 
+@pytest.mark.asyncio
+@patch("otterflow.agent._get_async_client")
+async def test_agent_astream(mock_get_async_client):
+    chunks = ["Hello", " from", " async", " stream!"]
+
+    async def mock_text_stream():
+        for chunk in chunks:
+            yield chunk
+
+    mock_stream_ctx = AsyncMock()
+    mock_stream_ctx.__aenter__.return_value.text_stream = mock_text_stream()
+    mock_stream_ctx.__aenter__.return_value.get_final_message = AsyncMock(
+        return_value=_mock_response("".join(chunks))
+    )
+    mock_get_async_client.return_value.messages.stream.return_value = mock_stream_ctx
+
+    agent = Agent(name="StreamAgent", role="You stream.")
+    collected = []
+    async for chunk in agent.astream("Stream this!"):
+        collected.append(chunk)
+
+    assert collected == chunks
+    assert "".join(collected) == "Hello from async stream!"
+
+
 # ── Sub-agent / spawn tests ───────────────────────────────────────────────────
 
 @patch("otterflow.agent._get_client")

@@ -10,7 +10,7 @@ powered by Claude. Build agents in 10 lines. Ship in minutes.
     >>> print(agent.run("What are the hottest AI startups right now?"))
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.2"
 __author__ = "Thomas Abato"
 __license__ = "MIT"
 

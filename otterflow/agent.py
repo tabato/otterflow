@@ -11,7 +11,7 @@ from __future__ import annotations
 import asyncio
 import os
 import time
-from typing import Any, Callable, Iterator
+from typing import Any, AsyncIterator, Callable, Iterator
 
 import anthropic
 from dotenv import load_dotenv
@@ -55,9 +55,9 @@ def _get_async_client() -> anthropic.AsyncAnthropic:
     return _async_client
 
 
-MODEL = "claude-sonnet-4-20250514"
+MODEL = "claude-sonnet-4-6"
 
-# Pricing per million tokens — claude-sonnet-4 (update if model changes)
+# Pricing per million tokens — claude-sonnet-4-6
 _COST_INPUT_PER_M = 3.00
 _COST_OUTPUT_PER_M = 15.00
 
@@ -278,6 +278,20 @@ class Agent:
                 tool_calls.append(block)
         return content, tool_calls
 
+    async def _async_call_api(self, **kwargs: Any) -> Any:
+        """Async API call with exponential-backoff retry on rate limits / server errors."""
+        client = _get_async_client()
+        for attempt in range(_MAX_RETRIES):
+            try:
+                return await client.messages.create(**kwargs)
+            except (anthropic.RateLimitError, anthropic.InternalServerError):
+                if attempt == _MAX_RETRIES - 1:
+                    raise
+                wait = 2 ** attempt
+                if self.verbose:
+                    print(f"[{self.name}] Retrying in {wait}s...")
+                await asyncio.sleep(wait)
+
     def _execute_tool_calls(self, tool_calls: list[Any]) -> list[dict]:
         results = []
         for tc in tool_calls:
@@ -378,6 +392,71 @@ class Agent:
         self.memory.add_turn(prompt, final_text)
 
     # ------------------------------------------------------------------ #
+    # Async streaming
+    # ------------------------------------------------------------------ #
+
+    async def astream(self, prompt: str) -> AsyncIterator[str]:
+        """
+        Async streaming — yields text chunks as they arrive from Claude.
+
+        Tool-call steps are executed concurrently between turns; only text
+        content is yielded. Use in FastAPI, async scripts, or any context
+        where you need non-blocking streaming.
+
+        Usage::
+
+            async for chunk in agent.astream("Write a report on AI chip stocks"):
+                print(chunk, end="", flush=True)
+            print()
+        """
+        messages = self.memory.build_messages(prompt)
+        client = _get_async_client()
+        final_text = ""
+
+        if self.verbose:
+            print(f"\n[{self.name}] 🦦 Streaming (async): {prompt[:80]}...")
+
+        for step in range(self.max_steps):
+            kwargs = self._build_kwargs(messages)
+            step_text = ""
+
+            async with client.messages.stream(**kwargs) as s:
+                async for chunk in s.text_stream:
+                    step_text += chunk
+                    yield chunk
+
+                final = await s.get_final_message()
+
+            self._track_usage(final)
+            assistant_content, tool_calls = self._parse_content(final)
+            messages.append({"role": "assistant", "content": assistant_content})
+
+            if not tool_calls:
+                final_text = step_text
+                break
+
+            if self.verbose:
+                print()
+
+            tool_results_raw = await asyncio.gather(
+                *[asyncio.to_thread(self._execute_tool, tc.name, tc.input) for tc in tool_calls]
+            )
+
+            if self.verbose:
+                for tc, result in zip(tool_calls, tool_results_raw):
+                    print(f"[{self.name}] 🔧 {tc.name} → {str(result)[:120]}")
+
+            messages.append({
+                "role": "user",
+                "content": [
+                    {"type": "tool_result", "tool_use_id": tc.id, "content": str(result)}
+                    for tc, result in zip(tool_calls, tool_results_raw)
+                ],
+            })
+
+        self.memory.add_turn(prompt, final_text)
+
+    # ------------------------------------------------------------------ #
     # Async
     # ------------------------------------------------------------------ #
 
@@ -398,26 +477,13 @@ class Agent:
             )
         """
         messages = self.memory.build_messages(prompt)
-        client = _get_async_client()
 
         if self.verbose:
             print(f"\n[{self.name}] 🦦 Starting (async): {prompt[:80]}...")
 
         for step in range(self.max_steps):
             kwargs = self._build_kwargs(messages)
-
-            for attempt in range(_MAX_RETRIES):
-                try:
-                    response = await client.messages.create(**kwargs)
-                    break
-                except (anthropic.RateLimitError, anthropic.InternalServerError):
-                    if attempt == _MAX_RETRIES - 1:
-                        raise
-                    wait = 2 ** attempt
-                    if self.verbose:
-                        print(f"[{self.name}] Retrying in {wait}s...")
-                    await asyncio.sleep(wait)
-
+            response = await self._async_call_api(**kwargs)
             self._track_usage(response)
 
             if self.verbose:
