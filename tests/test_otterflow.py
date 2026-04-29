@@ -118,6 +118,18 @@ def test_memory_builds_messages():
     assert any("TechCorp" in str(m) for m in messages)
 
 
+def test_memory_forget():
+    mem = Memory()
+    mem.remember("name", "Alex")
+    mem.forget("name")
+    assert mem.recall("name") is None
+
+
+def test_memory_forget_nonexistent():
+    mem = Memory()
+    mem.forget("ghost")  # should not raise
+
+
 def test_memory_clear_preserves_facts():
     mem = Memory()
     mem.add_turn("Hello", "Hi")

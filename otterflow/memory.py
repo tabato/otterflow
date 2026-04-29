@@ -44,6 +44,10 @@ class Memory:
         """Retrieve a persistent fact."""
         return self.facts.get(key)
 
+    def forget(self, key: str) -> None:
+        """Remove a persistent fact by key. No-op if the key doesn't exist."""
+        self.facts.pop(key, None)
+
     def clear(self) -> None:
         """Wipe history (facts are preserved)."""
         self._history.clear()
